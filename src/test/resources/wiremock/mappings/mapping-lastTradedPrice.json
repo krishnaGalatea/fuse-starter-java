@@ -2,12 +2,12 @@
   "id" : "16369e06-78d4-40a7-98d1-3dbe0ba82fc9",
   "name" : "tops_last",
   "request" : {
-    "url" : "/tops/last?symbols=FB",
+    "url" : "/tops/last?symbols=AAPL",
     "method" : "GET"
   },
   "response" : {
-    "status" : 404,
-    "jsonBody" : [{"symbol":"FB","price":186.3011,"size":100,"time":1565273330617}],
+    "status" : 200,
+    "jsonBody" : [{"symbol":"AAPL","price":186.3011,"size":100,"time":1565273330617}],
     "headers" : {
       "Server" : "nginx",
       "Date" : "Thu, 08 Aug 2019 14:08:53 GMT",
