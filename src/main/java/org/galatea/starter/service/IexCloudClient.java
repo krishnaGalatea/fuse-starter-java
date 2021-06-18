@@ -1,5 +1,6 @@
 package org.galatea.starter.service;
 
+import java.util.Date;
 import java.util.List;
 import org.galatea.starter.domain.IexHistoricalPrice;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -20,7 +21,7 @@ public interface IexCloudClient {
    * @param date optional specific date.
    * @return a list of historical prices for the symbol passed in.
    */
-  @GetMapping("/stock/{symbol}/chart/{range}/{date}?token=${spring.rest.token}")
+  @GetMapping("/stock/{symbol}/chart/{range}/{date}?token=${spring.rest.token}&chartByDay=true")
   List<IexHistoricalPrice> getAllHistoricalPrices(@PathVariable("symbol") String symbol,
       @PathVariable("range") String range, @PathVariable(required = false) String date);
 }
