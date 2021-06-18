@@ -1,0 +1,61 @@
+{
+  "id": "5dc720df-b9cd-465e-a27e-68ccdb49ef31",
+  "name": "stock_historical",
+  "request": {
+    "url": "/stock/TWTR/chart/1m/?token=%24%7Bspring.rest.token%7D",
+    "method": "GET"
+  },
+  "response": {
+    "status": 200,
+    "jsonBody": [
+      {
+        "close": 51.81,
+        "high": 52.08,
+        "low": 51.62,
+        "open": 53.01,
+        "symbol": "TWTR",
+        "volume": 17362305,
+        "date": "2021-05-10"
+      },
+      {
+        "close": 52.88,
+        "high": 53.1865,
+        "low": 49.2,
+        "open": 49.52,
+        "symbol": "TWTR",
+        "volume": 16749949,
+        "date": "2021-05-11"
+      },
+      {
+        "close": 50.7,
+        "high": 52.38,
+        "low": 50.06,
+        "open": 51.87,
+        "symbol": "TWTR",
+        "volume": 17223215,
+        "date": "2021-05-12"
+      }
+    ],
+    "headers": {
+      "Server": "nginx",
+      "Date": "Thu, 08 Aug 2019 14:14:08 GMT",
+      "Content-Type": "application/json; charset=utf-8",
+      "Connection": "keep-alive",
+      "set-cookie": "ctoken=pk_7cf142ac2d5a4c219344defb402d8f8a; Domain=.iexapis.com; Path=/; Expires=Fri, 09 Aug 2019 02:14:08 GMT; Secure",
+      "Content-Security-Policy": "default-src 'self'; child-src 'none'; object-src 'none'; style-src 'self' 'unsafe-inline'; font-src data:; frame-src 'self'; connect-src 'self' https://auth.iextrading.com https://api.iextrading.com https://api.iextrading.com wss://iextrading.com wss://tops.iextrading.com wss://api.iextrading.com wss://iextrading.com https://iextrading.com/member-center; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.google-analytics.com/analytics.js;",
+      "X-Content-Security-Policy": "default-src 'self'; child-src 'none'; object-src 'none'; style-src 'self' 'unsafe-inline'; font-src data:; frame-src 'self'; connect-src 'self' https://auth.iextrading.com https://api.iextrading.com https://api.iextrading.com wss://iextrading.com wss://tops.iextrading.com wss://api.iextrading.com wss://iextrading.com https://iextrading.com/member-center; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.google-analytics.com/analytics.js;",
+      "Frame-Options": "SAMEORIGIN",
+      "X-Frame-Options": "SAMEORIGIN",
+      "X-Content-Type-Options": "nosniff",
+      "Strict-Transport-Security": "max-age=15768000",
+      "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Credentials": "true",
+      "Access-Control-Allow-Methods": "GET, OPTIONS",
+      "Access-Control-Allow-Headers": "Origin, X-Requested-With, Content-Type, Accept"
+    }
+  },
+  "uuid": "5dc720df-b9cd-465e-a27e-68ccdb49ef31",
+  "persistent": true,
+  "insertionIndex": 4
+}
+

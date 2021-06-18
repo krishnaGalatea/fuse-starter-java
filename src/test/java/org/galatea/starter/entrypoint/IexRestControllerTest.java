@@ -112,7 +112,6 @@ public class IexRestControllerTest extends ASpringTest {
         org.springframework.test.web.servlet.request.MockMvcRequestBuilders
             .get("/iex/historicalPrices?symbol=TWTR&range=date&date=20200610")
             // This URL will be hit by the MockMvc client. The result is configured in the file
-            // src/test/resources/wiremock/mappings/mapping-historicalPricesDate.json
             .accept(MediaType.APPLICATION_JSON_VALUE))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$[0].close").value(new BigDecimal("36.33")))

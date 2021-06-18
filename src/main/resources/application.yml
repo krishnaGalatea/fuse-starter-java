@@ -25,6 +25,7 @@ mvc:
    iex:
       getAllSymbolsPath: /iex/symbols
       getLastTradedPricePath: /iex/lastTradedPrice
+      getHistoricalPricesPath: /iex/historicalPrices
    max-size-trace-payload: 50000
 jms:
    listener-concurrency: 1-5
@@ -33,6 +34,7 @@ jms:
 cache-config: ehcache.xml
 # Set debug level logging for the IEX Client so that Feign requests and responses are logged out
 log.level.org.galatea.starter.service.IEXClient: DEBUG
+log.level.org.galatea.starter.service.IEXCloudClient: DEBUG
 # Set info level logging for the autoconfigure package so that it doesn't print out the entire
 # CONDITIONS EVALUATION REPORT on startup
 logging.level.org.springframework.boot.autoconfigure: INFO
@@ -47,6 +49,7 @@ spring:
    rest:
       # this points at the local WireMock server in the test environment.
       iexBasePath: http://localhost:${wiremock.server.port}/
+      iexCloudBasePath: http://localhost:${wiremock.server.port}/
 
 ---
 # Dev properties go here
@@ -57,6 +60,8 @@ spring:
       password:
    rest:
       iexBasePath: https://api.iextrading.com/1.0
+      iexCloudBasePath: https://cloud.iexapis.com/stable
+      token: pk_7cf142ac2d5a4c219344defb402d8f8a
 # set debug to get spring to log the classpath (and other things) on startup
 debug: true
 
