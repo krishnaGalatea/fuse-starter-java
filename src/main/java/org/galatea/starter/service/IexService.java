@@ -63,6 +63,99 @@ public class IexService {
   }
 
   /**
+   * Gets all of the characters in a string that are letters.
+   * @param str to get letters from.
+   * @return letter characters from string.
+   */
+  private String getAlphabeticChars(String str) {
+    StringBuilder sb = new StringBuilder();
+    for (char c : str.toCharArray()) {
+      if (Character.isAlphabetic(c)) {
+        sb.append(c);
+      }
+    }
+    String alphaChars = sb.toString();
+    return alphaChars;
+  }
+
+  /**
+   * Gets all of the digits from a string and forms and integer.
+   * @param str to get digits from.
+   * @return integer formed from string.
+   */
+  private int getIntFromString(String str) {
+    StringBuilder sb = new StringBuilder();
+    boolean hasNum = false;
+    for (char c : str.toCharArray()) {
+      if (Character.isDigit(c)) {
+        sb.append(c);
+        hasNum = true;
+      }
+    }
+    int num = 0;
+    if (hasNum) {
+      num = Integer.parseInt(sb.toString());
+    }
+    return num;
+  }
+
+  /**
+   * Formats date string of type "YYYYMMDD" to "YYYY-MM-DD".
+   * @param date string formatted as "YYYYMMDD".
+   * @return string of date in form "YYYY-MM-DD".
+   */
+  private String dateFormat(String date) {
+    return date.substring(0,4) + "-" + date.substring(4,6) + "-" + date.substring(6);
+  }
+
+  /**
+   * Gets the past date.
+   * @param i amount of days that passed.
+   * @return the date in the past.
+   */
+  private LocalDate newDate(int i) {
+    LocalDate today = LocalDate.now();
+    LocalDate dayCheck = today.minusDays(i);
+    return dayCheck;
+  }
+
+  /**
+   * Calculates the amount of days wanted for the request.
+   * @param rangeType day, week, month, year, or year to date.
+   * @param rangeLength the amount of the rangeType.
+   * @return the number of days to check for prices.
+   */
+  private int getTotalNumberOfDays(String rangeType, int rangeLength) {
+    int amtDays = 0;
+    if (rangeType.equals("d")) {
+      amtDays = rangeLength;
+    } else if (rangeType.equals("w")) {
+      amtDays = rangeLength * 7;
+    } else if (rangeType.equals("m")) {
+      amtDays = (rangeLength * 30) + 1;
+    } else if (rangeType.equals("y")) {
+      amtDays = rangeLength * 365;
+    } else if (rangeType.equals("ytd")) {
+      amtDays = LocalDate.now().getDayOfYear();
+    }
+    return amtDays;
+  }
+
+  /**
+   * Updates the historical prices repository with new calls to the cloud API
+   * @param symbol the symbol to look up
+   * @param range the amount of days to check
+   * @param date optional date to check for one day
+   * @return updated list of prices that were added to the repository
+   */
+  private List<IexHistoricalPrice> updateHistoricalDB(String symbol, String range, String date) {
+    List<IexHistoricalPrice> newHistoricalPrices;
+    newHistoricalPrices = iexCloudClient.getAllHistoricalPrices(symbol, range, date);
+    historicalPricesRpsy.saveAll(newHistoricalPrices);
+    return newHistoricalPrices;
+  }
+
+  /**
    * Get all historical prices for a symbol and range that is passed in.
    * @param symbol a symbol to get historical prices for.
    * @param range the time period of prices to retrieve.
@@ -72,108 +165,52 @@ public class IexService {
   public List<IexHistoricalPrice> getAllHistoricalPrices(final String symbol, final String range,
       final String date) {
 
-    // This holds the new Historical Prices retrieved from the cloud for the first time.
-    // Refreshes for each call
-    List<IexHistoricalPrice> newHistoricalPrices;
-
-    // Holds the final list of historical prices to return. Contains prices from DB and cloud
     ArrayList<IexHistoricalPrice> finalHistoricalPrices = new ArrayList<IexHistoricalPrice>();
 
-    // Begin check to see if the cloud needs to be used.
     if (historicalPricesRpsy.count() == 0
         || historicalPricesRpsy.findBySymbolIgnoreCase(symbol).isEmpty()) {
       log.info("call thinks there is no symbol in rpsy");
-      // If DB is empty, or if it doesn't have the symbol call client and store entities in the DB
-      newHistoricalPrices = iexCloudClient.getAllHistoricalPrices(symbol, range, date);
-      historicalPricesRpsy.saveAll(newHistoricalPrices);
-      // Return the new call
-      return newHistoricalPrices;
+      return updateHistoricalDB(symbol, range, date);
     } else {
       log.info("symbol in rpsy, do everything else");
-      //if symbol exists in DB, find how many days we request and check for all of them
-      // get the number of days, weeks, or months from the range if given
-      StringBuilder sb = new StringBuilder();
-      boolean hasNum = false;
-      for (char c : range.toCharArray()) {
-        if (Character.isDigit(c)) {
-          sb.append(c);
-          hasNum = true;
-        }
-      }
-      int rangeLength = 0;
-      if (hasNum) {
-        rangeLength = Integer.parseInt(sb.toString());
-      }
+      int rangeLength = getIntFromString(range);
+      String rangeType = getAlphabeticChars(range);
 
-      //Get the type of range (days, weeks, months, or other)
-      StringBuilder sb2 = new StringBuilder();
-      for (char c : range.toCharArray()) {
-        if (Character.isAlphabetic(c)) {
-          sb2.append(c);
-        }
-      }
-      String rangeType = sb2.toString();
-      log.info("range Type is:" + rangeType);
-      LocalDate today = LocalDate.now();
-
-      // Find the final amount of days to check for
       int amtDays = 0;
-      if (rangeType.equals("d")) {
-        amtDays = rangeLength;
-      } else if (rangeType.equals("w")) {
-        amtDays = rangeLength * 7;
-      } else if (rangeType.equals("m")) {
-        amtDays = (rangeLength * 30) + 1;
-      } else if (rangeType.equals("y")) {
-        amtDays = rangeLength * 365;
+      if (rangeType.equals("d") || rangeType.equals("w") || rangeType.equals("m")
+      || rangeType.equals("y") || rangeType.equals("ytd") ) {
+        amtDays = getTotalNumberOfDays(rangeType, rangeLength);
       } else if (rangeType.equals("max")) {
-        newHistoricalPrices = iexCloudClient.getAllHistoricalPrices(symbol, range, date);
-        historicalPricesRpsy.saveAll(newHistoricalPrices);
-        return newHistoricalPrices;
-      } else if (rangeType.equals("ytd")) {
-        amtDays = LocalDate.now().getDayOfYear();
+        return updateHistoricalDB(symbol, range, date);
       } else if (rangeType.equals("date")) {
         if (date == null) {
           return Collections.emptyList();
         }
-        String newDate = date.substring(0,4) + "-" + date.substring(4,6) + "-" + date.substring(6);
-        log.info("new Date is:" + newDate);
+        String rpsyDate = dateFormat(date);
         finalHistoricalPrices.addAll(historicalPricesRpsy
-            .findBySymbolIgnoreCaseAndDate(symbol, newDate));
-        log.info(String.valueOf(finalHistoricalPrices.get(0)));
+            .findBySymbolIgnoreCaseAndDate(symbol, rpsyDate));
         if (finalHistoricalPrices.isEmpty() || finalHistoricalPrices.size() == 0) {
           log.info("getting one date from cloud");
-          newHistoricalPrices = iexCloudClient.getAllHistoricalPrices(symbol, range, date);
-          historicalPricesRpsy.saveAll(newHistoricalPrices);
-          return newHistoricalPrices;
+          return updateHistoricalDB(symbol, range, date);
         }
         return finalHistoricalPrices;
       }
 
-      // Check every date needed and see if it is in the rpsy
       for (int i = 1; i <= amtDays; i++) {
-        LocalDate dayCheck = today.minusDays(i);
-        String dateString = dayCheck.toString();
+        LocalDate dayCheck = newDate(i);
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("YYYYMMdd");
         String dateFind = formatter.format(dayCheck);
+        String dateString = dayCheck.toString();
 
-        log.info(String.valueOf(historicalPricesRpsy.findAll()));
-        log.info(
-            String.valueOf(historicalPricesRpsy.findBySymbolIgnoreCaseAndDate(symbol, dateString)));
         if (historicalPricesRpsy.findBySymbolIgnoreCaseAndDate(symbol, dateString).isEmpty()) {
-          newHistoricalPrices = iexCloudClient
-              .getAllHistoricalPrices(symbol, range, dateFind);
-          historicalPricesRpsy.saveAll(newHistoricalPrices);
+          List<IexHistoricalPrice> newHistoricalPrices = updateHistoricalDB(symbol, range, dateFind);
           finalHistoricalPrices.addAll(newHistoricalPrices);
-          log.info(String.valueOf(finalHistoricalPrices.toArray()));
         } else {
           log.info("Getting Historical Prices from Database");
           finalHistoricalPrices.addAll(historicalPricesRpsy
               .findBySymbolIgnoreCaseAndDate(symbol, dateString));
         }
-
       }
-
       return finalHistoricalPrices;
     }
   }
