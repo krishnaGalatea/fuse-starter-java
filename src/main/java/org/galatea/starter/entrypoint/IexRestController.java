@@ -1,5 +1,6 @@
 package org.galatea.starter.entrypoint;
 
+import java.text.ParseException;
 import java.util.List;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -61,7 +62,8 @@ public class IexRestController {
       MediaType.APPLICATION_JSON_VALUE})
   public List<IexHistoricalPrice> getHistoricalPrice(
       @RequestParam(value = "symbol") final String symbol, @RequestParam(value = "range")
-        final String range, @RequestParam(value = "date", required = false) final String date) {
+        final String range, @RequestParam(value = "date", required = false) final String date)
+      throws ParseException {
     return iexService.getAllHistoricalPrices(symbol, range, date);
   }
 
