@@ -2,7 +2,7 @@
   "id": "5dc720df-b9cd-465e-a27e-68ccdb49ef31",
   "name": "stock_historical",
   "request": {
-    "url": "/stock/TWTR/chart/1m/?token=%24%7Bspring.rest.token%7D",
+    "url": "/stock/TWTR/chart/1m/?token=%24%7Bspring.rest.token%7D&chartByDay=true",
     "method": "GET"
   },
   "response": {
